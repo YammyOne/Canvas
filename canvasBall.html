@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>绚丽的小球</title>
+	<script src="https://cdn.bootcss.com/underscore.js/1.8.3/underscore-min.js"></script>
+	<style>
+		*{
+			margin:0;
+			padding:0;
+			list-style:none;
+			border:none;
+		}
+	</style>
+
+</head>
+<body>
+	<canvas id = "canvas" border = "1px solid #000"></canvas>
+	<script>
+		function Ball(obj) {
+			this._init(obj);
+		}
+		Ball.prototype = {
+			constructor:Ball,
+			_init:function(obj) {
+				obj = obj||{};
+				this.x = obj.x || 0;
+				this.y = obj.y || 0;
+				this.r = obj.r || 0;
+				this.color = obj.color || "black";
+				this.speed = obj.speed || 1;
+				this.dx = Math.random()*20 - 10;
+				this.dy = Math.random()*20 - 10;
+				this.dr = Math.random()*2 + 1;
+			},
+			render:function(ctx) {
+				ctx.save();//保存当前环境的状态
+				ctx.beginPath();//开始创建路径
+				ctx.arc(this.x,this.y,this.r,0,2*Math.PI);//创建小球路径
+				ctx.fillStyle = this.color;//填充绘画的颜色
+				ctx.fill();//填充当前绘图
+				ctx.restore();//返回之前保存过的路径状态和属性
+
+			},
+			update:function() {
+				this.x += this.dx;
+				this.y += this.dy;
+				this.r -= this.dr;
+				if(this.r < 0) {
+					ballArr = _.without(ballArr,this);
+				}
+			}
+		};
+	</script>
+	<script>
+		var canvas = document.getElementById("canvas");
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+		var ctx = canvas.getContext("2d");//返回一个用于在画布上绘图的环境
+		var ballArr = [];
+		var colorArr = ["red","green","yellow","purple","black","pink","skyblue 		setInterval(function(){
+			ctx.clearRect(0,0,canvas.width,canvas.height);
+			for(var i = 0; i < ballArr.length;i++) {
+				ballArr[i].render(ctx);
+				ballArr[i].update();
+			}
+		},50);
+		canvas.onmousemove = function(e) {
+			ballArr.push(new Ball({
+				x:e.offsetX,
+				y:e.offsetY,
+				r:30,
+				color:colorArr[_.random(0,colorArr.length - 1)]
+			}));
+		};
+	</script>
+</body>
+</html>
